@@ -14,6 +14,7 @@ public:
 	friend Color operator - (const Color&, const Color&);
 	friend Color operator * (const Color&, const Color&);
 	friend Color operator * (const Color&, const double&);
+	friend Color operator * (const double&, const Color&);
 	friend Color operator / (const Color&, const double&);
 	friend Color& operator += (Color&, const Color&);
 	friend Color& operator -= (Color&, const Color&);
@@ -21,6 +22,7 @@ public:
 	friend Color& operator /= (Color&, const double&);
 	void Confine(); //luminance must be less than or equal to 1
 	void Input(std::stringstream&);
+	void Print();
 };
 
 #endif

@@ -142,3 +142,7 @@ Vec3 Vec3::Rotate(Vec3 axis, double theta) {
 	ret.z += z * (axis.z * axis.z + (1 - axis.z * axis.z) * cost);
 	return ret;
 }
+
+void Vec3::Print() {
+	printf("%lf %lf %lf\n", x, y, z);
+}

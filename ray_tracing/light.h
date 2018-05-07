@@ -1,18 +1,19 @@
 #pragma once
 #include "vec3.h"
 #include "color.h"
+#include "material.h"
 
 class Light {
 public:
-	Color color;
-	virtual Color CalculateColor(Vec3 &point, Vec3 &dir, Vec3 &vecN) = 0;
-	double roud, rous;
+	Material material;
+
+	Light() {}
+	Light(Material _m) :material(_m) {}
 };
 
 class Pointlight : public Light {
 public:
 	Vec3 pos;
 	
-	Pointlight(Color _color, Vec3 _pos);
-	Color CalculateColor(Vec3 &point, Vec3 &dir, Vec3 &vecN);
+	Pointlight(Material _m, Vec3 _pos);
 };

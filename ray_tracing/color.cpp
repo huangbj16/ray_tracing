@@ -16,6 +16,11 @@ Color operator * (const Color& A, const double& k) {
 	return Color(A.r * k, A.g * k, A.b * k);
 }
 
+Color operator*(const double &k, const Color &A)
+{
+	return Color(A.r * k, A.g * k, A.b * k);
+}
+
 Color operator / (const Color& A, const double& k) {
 	return Color(A.r / k, A.g / k, A.b / k);
 }
@@ -48,4 +53,8 @@ void Color::Confine() {
 
 void Color::Input(std::stringstream& fin) {
 	fin >> r >> g >> b;
+}
+
+void Color::Print() {
+	printf("%lf %lf %lf\n", r, g, b);
 }

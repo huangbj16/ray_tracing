@@ -10,17 +10,11 @@
 Vec3 standard_point[100];
 Vec3 standard_matrix[4][4];
 int n = 1000, m = 1000;
-
+int lightnum = 2, thingnum = 3;
 Vec3 viewpoint;
 Vec3 **viewplain;
-Color color;
-Vec3 pos;
-Vec3 dir;
-Vec3 center;
-double radius;
-double reflection;
-double refraction;
-Raytracer tracer;
+
+Raytracer *tracer;
 
 void InitialMatrix();
 
@@ -89,20 +83,57 @@ int main() {
 	waitKey(0);
 	*/
 	
+	/*
+	m_Primitive = new Primitive*[100];
+	// ground plane
+	m_Primitive[0] = new PlanePrim(vector3(0, 1, 0), 4.4f);
+	m_Primitive[0]->SetName("plane");
+	m_Primitive[0]->GetMaterial()->SetReflection(0);
+	m_Primitive[0]->GetMaterial()->SetDiffuse(1.0f);
+	m_Primitive[0]->GetMaterial()->SetColor(Color(0.4f, 0.3f, 0.3f));
+	// big sphere
+	m_Primitive[1] = new Sphere(vector3(1, -0.8f, 3), 2.5f);
+	m_Primitive[1]->SetName("big sphere");
+	m_Primitive[1]->GetMaterial()->SetReflection(0.6f);
+	m_Primitive[1]->GetMaterial()->SetColor(Color(0.7f, 0.7f, 0.7f));
+	// small sphere
+	m_Primitive[2] = new Sphere(vector3(-5.5f, -0.5, 7), 2);
+	m_Primitive[2]->SetName("small sphere");
+	m_Primitive[2]->GetMaterial()->SetReflection(1.0f);
+	m_Primitive[2]->GetMaterial()->SetDiffuse(0.1f);
+	m_Primitive[2]->GetMaterial()->SetColor(Color(0.7f, 0.7f, 1.0f));
+	// light source 1
+	m_Primitive[3] = new Sphere(vector3(0, 5, 5), 0.1f);
+	m_Primitive[3]->Light(true);
+	m_Primitive[3]->GetMaterial()->SetColor(Color(0.6f, 0.6f, 0.6f));
+	// light source 2
+	m_Primitive[4] = new Sphere(vector3(2, 5, 1), 0.1f);
+	m_Primitive[4]->Light(true);
+	m_Primitive[4]->GetMaterial()->SetColor(Color(0.7f, 0.7f, 0.9f));
+	*/
+
 	InitialParameter();
+	tracer = new Raytracer(n, m, lightnum, thingnum);
+	tracer->camera = new Camera(viewpoint, n, m, viewplain);
+	tracer->light[0] = new Pointlight(Material(Color(0.6f, 0.6f, 0.6f), 0, 0.2), Vec3(0, 5, 5));
+	tracer->light[1] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0.2), Vec3(2, 5, 1));
+	tracer->thing[0] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 1.0f));
+	tracer->thing[1] = new Ball(Vec3(1, -0.8f, 3), 2.5f, Material(Color(0.7f, 0.7f, 0.7f), 0.6f, 0.2f));
+	tracer->thing[2] = new Ball(Vec3(-5.5f, -0.5, 7), 2, Material(Color(0.7f, 0.7f, 1.0f), 1.0, 0.1f));
+	
+	tracer->Calculate();
 
-	tracer.camera = new Camera(viewpoint, n, m, viewplain);
-	tracer.light = new Pointlight(color, pos);
-	tracer.thing = new Ball(center, radius, reflection, refraction);
-	tracer.Calculate();
-
+	int count = 0;
 	Mat M(m, n, CV_8UC3, Scalar::all(0));
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < m; ++j) {
-			//printf("%lf %lf %lf ", tracer.camera->viewlines[i][j].
-			drawpixel(i, j, M, tracer.image[i][j]);
+			tracer->image[i][j].Confine();
+			tracer->image[i][j] *= 255;
+			//printf("(%lf %lf %lf)", tracer->image[i][j].r, tracer->image[i][j].g, tracer->image[i][j].b);
+			drawpixel(i, j, M, tracer->image[i][j]);
 		}
 	}
+	printf("%d\n", count);
 	imshow("original", M);
 	imwrite("draw.png", M);
 	waitKey(0);
@@ -111,22 +142,14 @@ int main() {
 }
 
 void InitialParameter() {
-	viewpoint = Vec3::Vec3(500, 500, -100);//相机视点
+	viewpoint = Vec3::Vec3(0, 0, -5);//相机视点
 	viewplain = new Vec3*[n];
 	for (int i = 0; i < n; ++i) {
 		viewplain[i] = new Vec3[m];
 		for (int j = 0; j < m; ++j) {
-			viewplain[i][j] = Vec3::Vec3(250 + 0.5*i, 250 + 0.5*j, 0);
+			viewplain[i][j] = Vec3::Vec3(-4 + 0.008*i, -4+0.008*j, 0);
 		}
 	}
-	tracer.n = n;
-	tracer.m = m;
-	color = Color::Color(255, 255, 255);//white light
-	pos = Vec3::Vec3(700, 700, 200);
-	center = Vec3::Vec3(500, 500, 100);
-	radius = 100;
-	reflection = 0.6;
-	refraction = 0.4;
 }
 
 

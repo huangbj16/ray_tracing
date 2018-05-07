@@ -39,6 +39,7 @@ public:
 	Vec3 Refract(Vec3 N, double n);
 	Vec3 Diffuse();
 	Vec3 Rotate(Vec3 axis, double theta);
+	void Print();
 };
 
 #endif

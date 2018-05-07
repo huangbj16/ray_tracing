@@ -1,17 +1,25 @@
 #include "light.h"
-
-Pointlight::Pointlight(Color _color, Vec3 _pos)
+//old version
+/*
+Color Pointlight::CalculateColor(Vec3 point, Vec3 dir, Vec3 vecN)//phong模型
 {
-	color = _color;
-	pos = _pos;
-	roud = 1;
-	rous = 1;
-}
-
-Color Pointlight::CalculateColor(Vec3 &point, Vec3 &dir, Vec3 &vecN)//phong模型
-{
-	Vec3 l = point - pos;
+	Vec3 l = (pos - point).GetUnitVector();
 	Vec3 rdir = Vec3(-dir.x, -dir.y, -dir.z).GetUnitVector();
-	Vec3 r = l.Reflect(vecN);
-	return Color(255, 255, 255) * (roud + rous * r.Dot(rdir) / vecN.GetUnitVector().Dot(l)) ;
+	vecN = vecN.GetUnitVector();
+	Vec3 h = (dir + l) / 2;
+	double res = vecN.Dot(h);
+	if (res <= 0) {
+		res = 0 + roud;
+	}
+	else {
+		res = roud + rous * pow(res, 20) / vecN.Dot(l);
+	}
+	return Color(255, 255, 255) * res * 0.8;
+}
+*/
+
+Pointlight::Pointlight(Material _m, Vec3 _pos)
+{
+	material = _m;
+	pos = _pos;
 }
