@@ -42,9 +42,9 @@ Vec3* Plain::Crash(Vec3 source, Vec3 dir)
 {
 	double down = vecN.Dot(dir);
 	//printf("%lf ", down);
-	if (fabs(down) >= 1e-6) {
+	if (fabs(down) >= EPS) {
 		double t = -(offset + (vecN.Dot(source))) / down;
-		if (t > 1e-6) {
+		if (t > EPS) {
 			Vec3 *crashpoint = new Vec3;
 			(*crashpoint) = (source + dir * t);
 			return crashpoint;

@@ -23,10 +23,8 @@ void Camera::CalculateLine()
 {
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < m; ++j) {
-			Line line;
-			line.point = viewplain[i][j];
-			line.dir = (line.point - viewpoint).GetUnitVector();
-			viewlines[i][j] = line;
+			viewlines[i][j].point = viewpoint;
+			viewlines[i][j].dir = (viewplain[i][j] - viewpoint).GetUnitVector();
 		}
 	}
 }

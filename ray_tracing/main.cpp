@@ -147,7 +147,7 @@ void InitialParameter() {
 	for (int i = 0; i < n; ++i) {
 		viewplain[i] = new Vec3[m];
 		for (int j = 0; j < m; ++j) {
-			viewplain[i][j] = Vec3::Vec3(-4 + 0.008*i, -4+0.008*j, 0);
+			viewplain[i][j] = Vec3::Vec3(-4 + 0.008*i, 4-0.008*j, 0);
 		}
 	}
 }
