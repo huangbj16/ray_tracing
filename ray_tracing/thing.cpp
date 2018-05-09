@@ -16,9 +16,10 @@ Vec3* Ball::Crash(Vec3 source, Vec3 dir)
 			double d = sqrt(l.Module2() - tp*tp);
 			if (d < radius) {//cross
 				double r = sqrt(radius*radius - d*d);
-				double distance = tp - d;
+				double distance = tp - r;
 				Vec3 *crashpoint = new Vec3;
-				(*crashpoint) = (source + tp * dir);
+				(*crashpoint) = (source + dir * distance);
+				//crashpoint->Print();
 				return crashpoint;
 			}
 		}

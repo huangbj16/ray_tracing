@@ -25,12 +25,12 @@ void Raytracer::Calculate()
 Color Raytracer::Intersect(Line line, int time) {
 	//printf("%lf %lf %lf\n", line.point.x, line.point.y, line.point.z);
 	//printf("%lf %lf %lf\n", line.dir.x, line.dir.y, line.dir.z);
-	/*
-	if (time == 3) {
-		printf("time=3\n");
+	
+	if (time == 5) {
+		//printf("time=3\n");
 		return Color(0, 0, 0);//enough!
 	}
-	*/
+	
 	Vec3 *crash_point = NULL;
 	Vec3 *point = NULL;
 	int p = -1;
@@ -51,13 +51,15 @@ Color Raytracer::Intersect(Line line, int time) {
 		//printf("%lf %lf %lf\n", crash_point->x, crash_point->y, crash_point->z);
 		Color colorlight(0, 0, 0);
 		for (int i = 0; i < lightnum; ++i) {
-			colorlight += CalculateColor((*crash_point), line.dir, thing[p], (Pointlight*)light[i]);
+			colorlight += CalculateColor((*crash_point), line.dir, thing[p], (Pointlight*)light[i], p);
 		}
 		//printf("%lf %lf %lf\n", crash_point->x, crash_point->y, crash_point->z);
+		
 		Vec3 vecN = thing[p]->GetvecN(crash_point);
 		line.point = Vec3(crash_point->x, crash_point->y, crash_point->z);
 		line.dir = line.dir.Reflect(vecN);
-		colorlight += Intersect(line, time + 1);
+		colorlight += Intersect(line, time + 1) * thing[p]->material.color * thing[p]->material.reflection;
+		
 		return colorlight;
 	}
 	else {//no crash
@@ -66,7 +68,7 @@ Color Raytracer::Intersect(Line line, int time) {
 	}
 }
 
-Color Raytracer::CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *thing, Pointlight *light) {
+Color Raytracer::CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *thing, Pointlight *light, int p) {
 	Vec3 l = (light->pos - crash_point).GetUnitVector();
 	Vec3 vecN = thing->GetvecN(&crash_point);
 	if (thing->material.diffusion > 0) {

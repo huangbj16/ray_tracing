@@ -3,6 +3,7 @@
 #include "bezier_surface.h"
 #include "raytracer.h"
 #include <ctime>
+#include <fstream>
 
 #define MX 1000
 #define MY 1000
@@ -125,14 +126,23 @@ int main() {
 
 	int count = 0;
 	Mat M(m, n, CV_8UC3, Scalar::all(0));
+	//ofstream fout("pixel.txt");
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < m; ++j) {
 			tracer->image[i][j].Confine();
 			tracer->image[i][j] *= 255;
-			//printf("(%lf %lf %lf)", tracer->image[i][j].r, tracer->image[i][j].g, tracer->image[i][j].b);
+			/*
+			if (tracer->image[i][j].r == 0 && tracer->image[i][j].g == 0 && tracer->image[i][j].b == 0)
+				fout << " ";
+			else
+				fout << "*";
+				*/
+			//fout << "(" << tracer->image[i][j].r << " " << tracer->image[i][j].g << " " << tracer->image[i][j].b << ")";
 			drawpixel(i, j, M, tracer->image[i][j]);
 		}
+		//fout << endl;
 	}
+	//fout.close();
 	printf("%d\n", count);
 	imshow("original", M);
 	imwrite("draw.png", M);

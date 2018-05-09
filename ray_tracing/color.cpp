@@ -16,8 +16,7 @@ Color operator * (const Color& A, const double& k) {
 	return Color(A.r * k, A.g * k, A.b * k);
 }
 
-Color operator*(const double &k, const Color &A)
-{
+Color operator * (const double &k, const Color &A) {
 	return Color(A.r * k, A.g * k, A.b * k);
 }
 
