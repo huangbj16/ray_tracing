@@ -71,14 +71,22 @@ Color Raytracer::Intersect(Line line, int time) {
 Color Raytracer::CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *thing, Pointlight *light, int p) {
 	Vec3 l = (light->pos - crash_point).GetUnitVector();
 	Vec3 vecN = thing->GetvecN(&crash_point);
+	Vec3 r = l.Reflect(vecN);
+	Color c = (0, 0, 0);
 	if (thing->material.diffusion > 0) {
 		double dot = l.Dot(vecN);
 		if (dot > 0) {
 			double diff = dot * thing->material.diffusion;
-			return thing->material.color * light->material.color * diff;
+			c += thing->material.color * light->material.color * diff;
 		}
 	}
-	return Color(0, 0, 0);
+	if (thing->material.specular > 0) {
+		double dot = r.Dot(view_direction);
+		if (dot > 0) {
+			c += light->material.color * thing->material.specular * pow(dot, 20);
+		}
+	}
+	return c;
 }
 
 //phantom's code

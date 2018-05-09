@@ -1,3 +1,4 @@
-﻿  raytracer.cpp
+﻿cl : 命令行 warning D9028: 最小重新生成失败，正在转换为标准生成
+  raytracer.cpp
   ray_tracing.vcxproj -> D:\2018spring\图形学\lighttrack\ray_tracing\x64\Debug\ray_tracing.exe
   ray_tracing.vcxproj -> D:\2018spring\图形学\lighttrack\ray_tracing\x64\Debug\ray_tracing.pdb (Full PDB)
