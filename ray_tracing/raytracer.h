@@ -18,5 +18,5 @@ public:
 	Raytracer(int _n, int _m, int _lightnum, int _thingnum);
 	void Calculate();
 	Color Intersect(Line line, int time);
-	Color CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *thing, Pointlight *light, int p);
+	Color CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *crash_thing, Pointlight *crash_light, int p);
 };
