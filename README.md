@@ -6,3 +6,5 @@
 
 things to note:
 Color 和 Vec3 中只声明了Vec3 * Double的形式，所以如果出现倒过来的情况，一定几率是不会报错的，而是会得出错误的结果。
+
+Jun15：加入了折射代码，发现了求shadow中的一个bug，解决了。
