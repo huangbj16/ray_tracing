@@ -11,7 +11,7 @@
 Vec3 standard_point[100];
 Vec3 standard_matrix[4][4];
 int n = 1000, m = 1000;
-int lightnum = 2, thingnum = 3;
+int lightnum = 2, thingnum = 62;
 Vec3 viewpoint;
 Vec3 **viewplain;
 
@@ -116,12 +116,34 @@ int main() {
 	InitialParameter();
 	tracer = new Raytracer(n, m, lightnum, thingnum);
 	tracer->camera = new Camera(viewpoint, n, m, viewplain);
-	tracer->light[0] = new Pointlight(Material(Color(0.6f, 0.6f, 0.6f), 0, 0.2), Vec3(0, 5, 5));
-	tracer->light[1] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0.2), Vec3(2, 5, 1));
-	tracer->thing[0] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 1.0f));
-	tracer->thing[1] = new Ball(Vec3(1, -0.8f, 3), 2.5f, Material(Color(0.7f, 0.7f, 0.7f), 0.6f, 0.2f));
-	tracer->thing[2] = new Ball(Vec3(-5.5f, -0.5, 7), 2, Material(Color(0.7f, 0.7f, 1.0f), 1.0, 0.1f));
-	
+	//new scene
+	tracer->light[0] = new Pointlight(Material(Color(0.4f, 0.4f, 0.4f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
+	tracer->light[1] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0, 0, 0, 0), Vec3(-3, 5, 1));
+	tracer->thing[0] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 1.0f, 0, 0, 0));
+	tracer->thing[1] = new Plain(Vec3(0.4f, 0, -1), 12, Material(Color(0.5f, 0.3f, 0.5f), 0, 0.6f, 0, 0, 0));
+	tracer->thing[2] = new Plain(Vec3(0, -1, 0), 7.4f, Material(Color(0.4f, 0.7f, 0.7f), 0, 0.5f, 0, 0, 0));
+	tracer->thing[3] = new Ball(Vec3(2, 0.8f, 3), 2.5f, Material(Color(0.7f, 0.7f, 1.0f), 0.2f, 0.2f, 0.8f, 0.8f, 1.3f));
+	tracer->thing[4] = new Ball(Vec3(-5.5f, -0.5f, 7), 2, Material(Color(0.7f, 0.7f, 1.0f), 0.5f, 0.1f, 0.8f, 0, 0));
+	tracer->thing[5] = new Ball(Vec3(-1.5f, -3.8f, 1), 1.5f, Material(Color(1.0f, 0.4f, 0.4f), 0, 0.2f, 0.8f, 0.8f, 1.5f));
+	int offset = 6;
+	for (int x = 0; x < 8; ++x) {
+		for (int y = 0; y < 7; ++y) {
+			tracer->thing[offset+x*7+y] = new Ball(Vec3(-4.5f+x*1.5f, -4.3f+y*1.5f, 10), 0.3f, Material(Color(0.3f, 1.0f, 0.4f), 0, 0.6f, 0.6f, 0, 1.5f));
+		}
+	}
+	//param: reflect, diff, spec, refract, rindex
+	//m_Color( Color( 0.2f, 0.2f, 0.2f ) ),
+	//m_Refl(0), m_Diff(0.2f), m_Spec(0.8f), m_RIndex(1.5f)
+	/*
+	tracer->light[0] = new Pointlight(Material(Color(0.6f, 0.6f, 0.6f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
+	tracer->light[1] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0, 0, 0, 0), Vec3(2, 5, 1));
+	tracer->thing[0] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 0.4f, 0, 0, 0));
+	tracer->thing[1] = new Ball(Vec3(1, -0.8f, 3), 2.5f, Material(Color(0.7f, 0.7f, 0.7f), 0.6f, 0.2f, 0.8f, 0.8, 1));
+	tracer->thing[2] = new Ball(Vec3(-5.5f, -0.5, 5), 2, Material(Color(0.7f, 0.7f, 1.0f), 0.6f, 0.2f, 0.8f, 0.8, 1));
+	tracer->thing[3] = new Ball(Vec3(5.0f, -0.8f, 7), 2, Material(Color(0.8f, 0.5f, 0.5f), 1.0f, 0.2f, 0.8f, 0.8, 1));
+	tracer->thing[4] = new Plain(Vec3(0, 0, -1), 15, Material(Color(0.4f, 0.3f, 0.3f), 0, 0.4f, 0, 0, 0));
+	//tracer->thing[5] = new Plain(Vec3(0, -1, 0), 10, Material(Color(0.4f, 0.3f, 0.3f), 0, 0.4f, 0, 0, 0));
+	*/
 	tracer->Calculate();
 
 	int count = 0;

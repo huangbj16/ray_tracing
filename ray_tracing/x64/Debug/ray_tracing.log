@@ -1,3 +1,6 @@
 ﻿  raytracer.cpp
+  main.cpp
+d:\2018spring\图形学\lighttrack\ray_tracing\ray_tracing\line.h(28): warning C4244: “参数”: 从“double”转换到“uchar”，可能丢失数据
+  正在生成代码...
   ray_tracing.vcxproj -> D:\2018spring\图形学\lighttrack\ray_tracing\x64\Debug\ray_tracing.exe
   ray_tracing.vcxproj -> D:\2018spring\图形学\lighttrack\ray_tracing\x64\Debug\ray_tracing.pdb (Full PDB)

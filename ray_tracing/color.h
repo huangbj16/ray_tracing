@@ -20,6 +20,7 @@ public:
 	friend Color& operator -= (Color&, const Color&);
 	friend Color& operator *= (Color&, const double&);
 	friend Color& operator /= (Color&, const double&);
+	bool IsZeroColor();
 	void Confine(); //luminance must be less than or equal to 1
 	void Input(std::stringstream&);
 	void Print();

@@ -23,14 +23,9 @@ void Raytracer::Calculate()
 }
 
 Color Raytracer::Intersect(Line line, int time) {
-	//printf("%lf %lf %lf\n", line.point.x, line.point.y, line.point.z);
-	//printf("%lf %lf %lf\n", line.dir.x, line.dir.y, line.dir.z);
-	
 	if (time == 5) {
-		//printf("time=3\n");
 		return Color(0, 0, 0);//enough!
 	}
-	
 	Vec3 *crash_point = NULL;
 	Vec3 *point = NULL;
 	int p = -1;
@@ -48,31 +43,52 @@ Color Raytracer::Intersect(Line line, int time) {
 		}
 	}
 	if (crash_point != NULL) {
-		//printf("%lf %lf %lf\n", crash_point->x, crash_point->y, crash_point->z);
 		Color colorlight(0, 0, 0);
-		for (int i = 0; i < lightnum; ++i) {
-			colorlight += CalculateColor((*crash_point), line.dir, thing[p], (Pointlight*)light[i], p);
+		if (!thing[p]->Inside(line.point)) {//outside
+			Vec3 check(-9.96, -4.4, 7.5);
+			for (int i = 0; i < lightnum; ++i) {
+				colorlight += CalculateColor((*crash_point), line.dir, thing[p], (Pointlight*)light[i], p);//calculate color at the point
+			}
+			Vec3 vecN = thing[p]->GetvecN(crash_point);
+			if (thing[p]->material.reflection > 0) {
+				Line newline;
+				newline.dir = line.dir.Reflect(vecN);
+				newline.point = (*crash_point) + newline.dir * EPS;
+				colorlight += Intersect(newline, time + 1) * thing[p]->material.color * thing[p]->material.reflection;//calculate reflect color
+			}
+			if (thing[p]->material.refraction > 0) {//calculate refraction color
+				double n = thing[p]->material.refraction_index;
+				Line newline;
+				n = 1 / n;
+				newline.dir = line.dir.Refract(vecN, n);
+				if (!newline.dir.IsZeroVector()) {
+					newline.point = (*crash_point) + newline.dir * EPS;
+					double absorb = exp((-0.01f) * thing[p]->LengthInside(vecN, newline.dir));
+					colorlight += Intersect(newline, time + 1) * (thing[p]->material.refraction * absorb);
+				}
+			}
 		}
-		//printf("%lf %lf %lf\n", crash_point->x, crash_point->y, crash_point->z);
-		
-		Vec3 vecN = thing[p]->GetvecN(crash_point);
-		line.point = Vec3(crash_point->x, crash_point->y, crash_point->z);
-		line.dir = line.dir.Reflect(vecN);
-		colorlight += Intersect(line, time + 1) * thing[p]->material.color * thing[p]->material.reflection;
-		
+		else {//inside
+			Vec3 vecN = thing[p]->GetvecN(crash_point);
+			double n = thing[p]->material.refraction_index;
+			Line newline;
+			newline.dir = line.dir.Refract(-vecN, n);
+			if (!newline.dir.IsZeroVector()) {
+				newline.point = (*crash_point) + newline.dir * EPS;
+				colorlight += Intersect(newline, time + 1) * thing[p]->material.refraction;
+			}
+		}
 		return colorlight;
 	}
 	else {//no crash
-		//return Color(20, 20, 20);
 		return Color(0, 0, 0);
 	}
 }
-
 Color Raytracer::CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *crash_thing, Pointlight *crash_light, int p) {
 	Vec3 l = (crash_light->pos - crash_point).GetUnitVector();
 	Vec3 vecN = crash_thing->GetvecN(&crash_point);
 	Vec3 r = l.Reflect(vecN);
-	Color c = (0, 0, 0);
+	Color c(0, 0, 0);
 	//first calculate shadow;
 	double dist = (crash_point - crash_light->pos).Module2();
 	Vec3 *other_crash = NULL;
@@ -80,7 +96,7 @@ Color Raytracer::CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *cr
 		if (i == p) continue;
 		other_crash = thing[i]->Crash(crash_point, l);
 		if (other_crash != NULL) {
-			if (((*other_crash) - crash_light->pos).Module2() < dist) {
+			if (((*other_crash) - crash_point).Module2() < dist) {
 				return Color(0, 0, 0);
 			}
 		}
@@ -101,22 +117,3 @@ Color Raytracer::CalculateColor(Vec3 crash_point, Vec3 view_direction, Thing *cr
 	}
 	return c;
 }
-
-//phantom's code
-/*
-Primitive* light = p;
-// calculate diffuse shading
-vector3 L = ((Sphere*)light)->GetCentre() - pi;
-NORMALIZE(L);
-vector3 N = prim->GetNormal(pi);
-if (prim->GetMaterial()->GetDiffuse() > 0)
-{
-	float dot = DOT(N, L);
-	if (dot > 0)
-	{
-		float diff = dot * prim->GetMaterial()->GetDiffuse();
-		// add diffuse component to ray color
-		a_Acc += diff * prim->GetMaterial()->GetColor() * light->GetMaterial()->GetColor();
-	}
-}
-*/

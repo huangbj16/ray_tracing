@@ -117,7 +117,7 @@ Vec3 Vec3::Refract(Vec3 N, double n) {
 	Vec3 V = GetUnitVector();
 	double cosI = -N.Dot(V), cosT2 = 1 - (n * n) * (1 - cosI * cosI);
 	if (cosT2 > EPS) return V * n + N * (n * cosI - sqrt(cosT2));
-	return V.Reflect(N);
+	else return Vec3(0, 0, 0);
 }
 
 Vec3 Vec3::Diffuse() {

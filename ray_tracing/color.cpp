@@ -44,6 +44,11 @@ Color& operator /= (Color& A, const double& k) {
 	return A;
 }
 
+bool Color::IsZeroColor()
+{
+	return fabs(r) < 1e-6 && fabs(g) < 1e-6 && fabs(b) < 1e-6;
+}
+
 void Color::Confine() {
 	if (r > 1) r = 1;
 	if (g > 1) g = 1;
