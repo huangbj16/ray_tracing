@@ -11,7 +11,7 @@
 Vec3 standard_point[100];
 Vec3 standard_matrix[4][4];
 int n = 1000, m = 1000;
-int lightnum = 2, thingnum = 62;
+int lightnum = 1, thingnum = 30;
 Vec3 viewpoint;
 Vec3 **viewplain;
 
@@ -116,6 +116,7 @@ int main() {
 	InitialParameter();
 	tracer = new Raytracer(n, m, lightnum, thingnum);
 	tracer->camera = new Camera(viewpoint, n, m, viewplain);
+	/*
 	//new scene
 	tracer->light[0] = new Pointlight(Material(Color(0.4f, 0.4f, 0.4f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
 	tracer->light[1] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0, 0, 0, 0), Vec3(-3, 5, 1));
@@ -131,10 +132,40 @@ int main() {
 			tracer->thing[offset+x*7+y] = new Ball(Vec3(-4.5f+x*1.5f, -4.3f+y*1.5f, 10), 0.3f, Material(Color(0.3f, 1.0f, 0.4f), 0, 0.6f, 0.6f, 0, 1.5f));
 		}
 	}
+	*/
+
+	//tracer->light[0] = new Pointlight(Material(Color(0.4f, 0.4f, 0.4f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
+	tracer->light[0] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
+	tracer->thing[0] = new Plain(Vec3(0.4f, 0, -1), 12, Material(Color(0.5f, 0.3f, 0.5f), 0, 0.6f, 0, 0, 0));
+	tracer->thing[1] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 1.0f, 0, 0, 0));
+	for (int i = 0; i < 28; ++i) {
+		char number[3];
+		sprintf_s(number, "%d", i);
+		string filename = "bezier/controlvoxel" + string(number) + ".txt";
+		std::cout << filename << endl;
+		tracer->thing[2+i] = new Bezier(filename, Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	}
+	/*
+	tracer->thing[2] = new Bezier("bezier/controlvoxel0.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[3] = new Bezier("bezier/controlvoxel1.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[4] = new Bezier("bezier/controlvoxel2.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[5] = new Bezier("bezier/controlvoxel3.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[6] = new Bezier("bezier/controlvoxel4.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[7] = new Bezier("bezier/controlvoxel5.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[8] = new Bezier("bezier/controlvoxel6.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[9] = new Bezier("bezier/controlvoxel7.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	
+	tracer->thing[2] = new Bezier("bezier/controlvoxel28.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[3] = new Bezier("bezier/controlvoxel29.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[4] = new Bezier("bezier/controlvoxel30.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	tracer->thing[5] = new Bezier("bezier/controlvoxel31.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
+	
+	//default initial in phantom
 	//param: reflect, diff, spec, refract, rindex
 	//m_Color( Color( 0.2f, 0.2f, 0.2f ) ),
 	//m_Refl(0), m_Diff(0.2f), m_Spec(0.8f), m_RIndex(1.5f)
-	/*
+	
+	/*first scene
 	tracer->light[0] = new Pointlight(Material(Color(0.6f, 0.6f, 0.6f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
 	tracer->light[1] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0, 0, 0, 0), Vec3(2, 5, 1));
 	tracer->thing[0] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 0.4f, 0, 0, 0));
@@ -145,7 +176,6 @@ int main() {
 	//tracer->thing[5] = new Plain(Vec3(0, -1, 0), 10, Material(Color(0.4f, 0.3f, 0.3f), 0, 0.4f, 0, 0, 0));
 	*/
 	tracer->Calculate();
-
 	int count = 0;
 	Mat M(m, n, CV_8UC3, Scalar::all(0));
 	//ofstream fout("pixel.txt");
@@ -169,17 +199,17 @@ int main() {
 	imshow("original", M);
 	imwrite("draw.png", M);
 	waitKey(0);
-	
+	cvDestroyAllWindows();
 	return 0;
 }
 
 void InitialParameter() {
-	viewpoint = Vec3::Vec3(0, 0, -5);//相机视点
+	viewpoint = Vec3::Vec3(0, 10, 0);//相机视点
 	viewplain = new Vec3*[n];
 	for (int i = 0; i < n; ++i) {
 		viewplain[i] = new Vec3[m];
 		for (int j = 0; j < m; ++j) {
-			viewplain[i][j] = Vec3::Vec3(-4 + 0.008*i, 4-0.008*j, 0);
+			viewplain[i][j] = Vec3::Vec3(-4 + 0.008*i, 5, 4-0.008*j);
 		}
 	}
 }

@@ -4,6 +4,8 @@
 #include "material.h"
 #include <cmath>
 #include <stdio.h>
+#include <fstream>
+#include <string>
 
 class Thing {
 public:
@@ -31,7 +33,29 @@ private://vecN * X + offset = 0
 	double offset;
 	Vec3 vecN;
 public:
+	Plain();
 	Plain(Vec3 _vecN, double _offset, Material _m);
 	Vec3* Crash(Vec3 source, Vec3 dir);
 	Vec3 GetvecN(Vec3 *crash_point);
+};
+
+class Bezier : public Thing {
+public:
+	Vec3 control[4][4];//4*4¿ØÖÆµã
+	int n, m;//fixed 3 3
+	int Bx[4], By[4];
+	double factor[4][4];
+	double dfactor[4][3];
+	Vec3 mincover, maxcover;
+	Vec3 precrash;
+	double preu, prev;
+	Plain cover[6];
+	Bezier(std::string filename, Material _m);
+	void Initial();
+	Vec3 *Crash(Vec3 source, Vec3 dir);
+	Vec3 GetvecN(Vec3 *crash_point);
+	Vec3 GetPoint(double u, double v);
+	Vec3 GetDiffU(double u, double v);
+	Vec3 GetDiffV(double u, double v);
+	Vec3 Crash_cover(Vec3 source, Vec3 dir);
 };

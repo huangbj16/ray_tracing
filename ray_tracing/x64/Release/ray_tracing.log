@@ -1,0 +1,9 @@
+﻿  main.cpp
+d:\2018spring\图形学\lighttrack\ray_tracing\ray_tracing\line.h(28): warning C4244: “参数”: 从“double”转换到“uchar”，可能丢失数据
+  正在生成代码
+  28 of 763 functions ( 3.7%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  ray_tracing.vcxproj -> D:\2018spring\图形学\lighttrack\ray_tracing\x64\Release\ray_tracing.exe
+  ray_tracing.vcxproj -> D:\2018spring\图形学\lighttrack\ray_tracing\x64\Release\ray_tracing.pdb (Full PDB)
