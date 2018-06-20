@@ -105,6 +105,11 @@ bool Vec3::IsZeroVector() {
 	return fabs(x) < EPS && fabs(y) < EPS && fabs(z) < EPS;
 }
 
+bool Vec3::IsNullVector()
+{
+	return ((*this) - Vec3(10000, 10000, 10000)).IsZeroVector();
+}
+
 void Vec3::Input(std::stringstream& fin) {
 	fin >> x >> y >> z;
 }

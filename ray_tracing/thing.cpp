@@ -18,7 +18,7 @@ Ball::Ball(Vec3 _c, double _r, Material _m)
 	material = _m;
 }
 
-Vec3* Ball::Crash(Vec3 source, Vec3 dir)
+CrashBag Ball::Crash(Vec3 source, Vec3 dir)
 {
 	Vec3 l = center - source;
 	if (l.Module() > radius) {//outside the ball;
@@ -28,29 +28,29 @@ Vec3* Ball::Crash(Vec3 source, Vec3 dir)
 			if (d < radius) {//cross
 				double r = sqrt(radius*radius - d*d);
 				double distance = tp - r;
-				Vec3 *crashpoint = new Vec3;
-				(*crashpoint) = (source + dir * distance);
-				//crashpoint->Print();
-				return crashpoint;
+				CrashBag bag;
+				bag.crash_point = source + dir*distance;
+				bag.vecN = (bag.crash_point - center).GetUnitVector();
+				return bag;
 			}
 		}
 	}
-	
 	else if(l.Module() < radius){//inside the ball;
 		double LCos = l.Dot(dir.GetUnitVector());
 		double dist = sqrt(radius*radius - l.Module2() + LCos*LCos) + LCos;
-		Vec3 *crashpoint = new Vec3(source + dir*dist);
-		return crashpoint;
+		CrashBag bag;
+		bag.crash_point = source + dir*dist;
+		bag.vecN = (center - bag.crash_point).GetUnitVector();
+		return bag;
 	}
-	
-	return NULL;
+	return CrashBag();
 }
-
+/*
 Vec3 Ball::GetvecN(Vec3 * crash_point)
 {
 	return (*crash_point - center).GetUnitVector();
 }
-
+*/
 bool Ball::Inside(Vec3 point)
 {
 	double dist = (center - point).Module();
@@ -79,26 +79,27 @@ Plain::Plain(Vec3 _vecN, double _offset, Material _m)
 	material = _m;
 }
 
-Vec3* Plain::Crash(Vec3 source, Vec3 dir)
+CrashBag Plain::Crash(Vec3 source, Vec3 dir)
 {
 	double down = vecN.Dot(dir);
 	//printf("%lf ", down);
 	if (fabs(down) >= EPS) {
 		double t = -(offset + (vecN.Dot(source))) / down;
 		if (t > EPS) {
-			Vec3 *crashpoint = new Vec3;
-			(*crashpoint) = (source + dir * t);
-			return crashpoint;
+			CrashBag bag;
+			bag.crash_point = source + dir*t;
+			bag.vecN = vecN;
+			return bag;
 		}
 	}
-	return NULL;
+	return CrashBag();
 }
-
+/*
 Vec3 Plain::GetvecN(Vec3 * crash_point)
 {
 	return vecN;
 }
-
+*/
 Bezier::Bezier(std::string filename, Material _m)
 {
 	n = 3;
@@ -178,15 +179,14 @@ void Bezier::Initial()
 	dfactor[3][2] = 3;
 }
 
-Vec3 * Bezier::Crash(Vec3 source, Vec3 dir)
+CrashBag Bezier::Crash(Vec3 source, Vec3 dir)
 {
 	//四个bug解决：inverse不会改变dF，需要重新赋值；uvt顺序出现问题；rand是整数需要转换；u，v可以多次赋初值。
-	Vec3 *crash_point = new Vec3();
-	(*crash_point) = Crash_cover(source, dir);
-	if (crash_point->IsZeroVector()) return NULL;//not crashed with the cover, impossible with the bezier
+	Vec3 crash_point = Crash_cover(source, dir);
+	if (crash_point.IsNullVector()) return CrashBag();//not crashed with the cover, impossible with the bezier
 	
 	double u, v, t;//牛顿迭代初始值
-	double t0 = ((*crash_point) - source).Module();
+	double t0 = (crash_point - source).Module();
 	Vec3 temp, tempu, tempv;
 	Eigen::Matrix3d dF, dFinverse;
 	Eigen::Vector3d p, pnext, F;
@@ -197,10 +197,10 @@ Vec3 * Bezier::Crash(Vec3 source, Vec3 dir)
 		u = (double)rand() / RAND_MAX;
 		v = (double)rand() / RAND_MAX;
 		t = t0;
-		(*crash_point) = source + dir*t;
+		crash_point = source + dir*t;
 		for (int i = 0; i < 10; ++i) {
 			p << u, v, t;
-			temp = GetPoint(u, v) - (*crash_point);
+			temp = GetPoint(u, v) - crash_point;
 			//printf("%d: %lf %lf %lf %lf\n", i, u, v, t, temp.Module());
 			F << temp.x, temp.y, temp.z;
 			tempu = GetDiffU(u, v);
@@ -218,19 +218,23 @@ Vec3 * Bezier::Crash(Vec3 source, Vec3 dir)
 			u = pnext(0);
 			v = pnext(1);
 			t = pnext(2);
-			(*crash_point) = source + dir*t;
+			crash_point = source + dir*t;
 			if (temp.IsZeroVector() && u >= 0 && u <= 1 && v >= 0 && v <= 1) {
 				//printf("u, v, delta: %lf, %lf %lf\n", u, v, temp.Module());
-				preu = u;
-				prev = v;
-				precrash = (*crash_point);
-				return crash_point;
+				CrashBag bag;
+				bag.crash_point = crash_point;
+				Vec3 cross = (tempu*tempv).GetUnitVector();
+				if (cross.Dot(dir) < 0) bag.vecN = cross;
+				else bag.vecN = cross*(-1);
+				bag.u = u;
+				bag.v = v;
+				return bag;
 			}
 		}
 	}
-	return NULL;
+	return CrashBag();
 }
-
+/*
 Vec3 Bezier::GetvecN(Vec3 * crash_point)
 {
 	if (((*crash_point) - precrash).IsZeroVector()) {
@@ -252,7 +256,7 @@ Vec3 Bezier::GetvecN(Vec3 * crash_point)
 	printf("else\n");
 	return Vec3(0, 0, 0);
 }
-
+*/
 Vec3 Bezier::GetPoint(double u, double v)
 {
 	Vec3 p(0, 0, 0);
@@ -302,39 +306,44 @@ Vec3 Bezier::GetDiffV(double u, double v)
 
 Vec3 Bezier::Crash_cover(Vec3 source, Vec3 dir)
 {
-	Vec3 *crash_point;
-	crash_point = cover[0].Crash(source, dir);
-	if (crash_point != NULL) {
-		if (crash_point->y > mincover.y && crash_point->y < maxcover.y && crash_point->z > mincover.z && crash_point->z < maxcover.z)
-			return (*crash_point);
+	Vec3 crash_point;
+	crash_point = cover[0].Crash(source, dir).crash_point;
+	if (!crash_point.IsNullVector()) {
+		if (crash_point.y > mincover.y && crash_point.y < maxcover.y && crash_point.z > mincover.z && crash_point.z < maxcover.z)
+			return crash_point;
 	}
-	crash_point = cover[1].Crash(source, dir);
-	if (crash_point != NULL) {
-		if (crash_point->y > mincover.y && crash_point->y < maxcover.y && crash_point->z > mincover.z && crash_point->z < maxcover.z)
-			return (*crash_point);
+	crash_point = cover[1].Crash(source, dir).crash_point;
+	if (!crash_point.IsNullVector()) {
+		if (crash_point.y > mincover.y && crash_point.y < maxcover.y && crash_point.z > mincover.z && crash_point.z < maxcover.z)
+			return crash_point;
 	}
-	crash_point = cover[2].Crash(source, dir);
-	if (crash_point != NULL) {
-		if (crash_point->x > mincover.x && crash_point->x < maxcover.x && crash_point->z > mincover.z && crash_point->z < maxcover.z)
-			return (*crash_point);
+	crash_point = cover[2].Crash(source, dir).crash_point;
+	if (!crash_point.IsNullVector()) {
+		if (crash_point.x > mincover.x && crash_point.x < maxcover.x && crash_point.z > mincover.z && crash_point.z < maxcover.z)
+			return crash_point;
 	}
-	crash_point = cover[3].Crash(source, dir);
-	if (crash_point != NULL) {
-		if (crash_point->x > mincover.x && crash_point->x < maxcover.x && crash_point->z > mincover.z && crash_point->z < maxcover.z)
-			return (*crash_point);
+	crash_point = cover[3].Crash(source, dir).crash_point;
+	if (!crash_point.IsNullVector()) {
+		if (crash_point.x > mincover.x && crash_point.x < maxcover.x && crash_point.z > mincover.z && crash_point.z < maxcover.z)
+			return crash_point;
 	}
-	crash_point = cover[4].Crash(source, dir);
-	if (crash_point != NULL) {
-		if (crash_point->x > mincover.x && crash_point->x < maxcover.x && crash_point->y > mincover.y && crash_point->y < maxcover.y)
-			return (*crash_point);
+	crash_point = cover[4].Crash(source, dir).crash_point;
+	if (!crash_point.IsNullVector()) {
+		if (crash_point.x > mincover.x && crash_point.x < maxcover.x && crash_point.y > mincover.y && crash_point.y < maxcover.y)
+			return crash_point;
 	}
-	crash_point = cover[5].Crash(source, dir);
-	if (crash_point != NULL) {
-		if (crash_point->x > mincover.x && crash_point->x < maxcover.x && crash_point->y > mincover.y && crash_point->y < maxcover.y)
-			return (*crash_point);
+	crash_point = cover[5].Crash(source, dir).crash_point;
+	if (!crash_point.IsNullVector()) {
+		if (crash_point.x > mincover.x && crash_point.x < maxcover.x && crash_point.y > mincover.y && crash_point.y < maxcover.y)
+			return crash_point;
 	}
-	return Vec3(0,0,0);
+	return Vec3(10000,10000,10000);
 }
 
-
-
+CrashBag::CrashBag()
+{
+	crash_point = Vec3(10000, 10000, 10000);
+	vecN = Vec3(0, 0, 0);
+	u = 0;
+	v = 0;
+}

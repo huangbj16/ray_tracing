@@ -11,7 +11,7 @@
 Vec3 standard_point[100];
 Vec3 standard_matrix[4][4];
 int n = 1000, m = 1000;
-int lightnum = 1, thingnum = 30;
+int lightnum = 2, thingnum = 34;
 Vec3 viewpoint;
 Vec3 **viewplain;
 
@@ -116,49 +116,31 @@ int main() {
 	InitialParameter();
 	tracer = new Raytracer(n, m, lightnum, thingnum);
 	tracer->camera = new Camera(viewpoint, n, m, viewplain);
-	/*
+	
 	//new scene
 	tracer->light[0] = new Pointlight(Material(Color(0.4f, 0.4f, 0.4f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
 	tracer->light[1] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0, 0, 0, 0), Vec3(-3, 5, 1));
 	tracer->thing[0] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 1.0f, 0, 0, 0));
 	tracer->thing[1] = new Plain(Vec3(0.4f, 0, -1), 12, Material(Color(0.5f, 0.3f, 0.5f), 0, 0.6f, 0, 0, 0));
-	tracer->thing[2] = new Plain(Vec3(0, -1, 0), 7.4f, Material(Color(0.4f, 0.7f, 0.7f), 0, 0.5f, 0, 0, 0));
-	tracer->thing[3] = new Ball(Vec3(2, 0.8f, 3), 2.5f, Material(Color(0.7f, 0.7f, 1.0f), 0.2f, 0.2f, 0.8f, 0.8f, 1.3f));
-	tracer->thing[4] = new Ball(Vec3(-5.5f, -0.5f, 7), 2, Material(Color(0.7f, 0.7f, 1.0f), 0.5f, 0.1f, 0.8f, 0, 0));
-	tracer->thing[5] = new Ball(Vec3(-1.5f, -3.8f, 1), 1.5f, Material(Color(1.0f, 0.4f, 0.4f), 0, 0.2f, 0.8f, 0.8f, 1.5f));
-	int offset = 6;
+	//tracer->thing[2] = new Plain(Vec3(0, -1, 0), 7.4f, Material(Color(0.4f, 0.7f, 0.7f), 0, 0.5f, 0, 0, 0));
+	/*
+	tracer->thing[2] = new Ball(Vec3(2, 0.8f, 7), 2.5f, Material(Color(0.7f, 0.7f, 1.0f), 0.2f, 0.2f, 0.8f, 0.8f, 1.3f));
+	tracer->thing[3] = new Ball(Vec3(-5.5f, -0.5f, 7), 2, Material(Color(0.7f, 0.7f, 1.0f), 0.5f, 0.1f, 0.8f, 0, 0));
+	tracer->thing[4] = new Ball(Vec3(-1.5f, -3.8f, 1), 1.5f, Material(Color(1.0f, 0.4f, 0.4f), 0, 0.2f, 0.8f, 0.8f, 1.5f));
+	int offset = 5;
 	for (int x = 0; x < 8; ++x) {
 		for (int y = 0; y < 7; ++y) {
 			tracer->thing[offset+x*7+y] = new Ball(Vec3(-4.5f+x*1.5f, -4.3f+y*1.5f, 10), 0.3f, Material(Color(0.3f, 1.0f, 0.4f), 0, 0.6f, 0.6f, 0, 1.5f));
 		}
 	}
 	*/
-
-	//tracer->light[0] = new Pointlight(Material(Color(0.4f, 0.4f, 0.4f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
-	tracer->light[0] = new Pointlight(Material(Color(0.7f, 0.7f, 0.9f), 0, 0, 0, 0, 0), Vec3(0, 5, 5));
-	tracer->thing[0] = new Plain(Vec3(0.4f, 0, -1), 12, Material(Color(0.5f, 0.3f, 0.5f), 0, 0.6f, 0, 0, 0));
-	tracer->thing[1] = new Plain(Vec3(0, 1, 0), 4.4f, Material(Color(0.4f, 0.3f, 0.3f), 0, 1.0f, 0, 0, 0));
-	for (int i = 0; i < 28; ++i) {
+	for (int i = 0; i < 32; ++i) {
 		char number[3];
 		sprintf_s(number, "%d", i);
 		string filename = "bezier/controlvoxel" + string(number) + ".txt";
 		std::cout << filename << endl;
 		tracer->thing[2+i] = new Bezier(filename, Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
 	}
-	/*
-	tracer->thing[2] = new Bezier("bezier/controlvoxel0.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[3] = new Bezier("bezier/controlvoxel1.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[4] = new Bezier("bezier/controlvoxel2.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[5] = new Bezier("bezier/controlvoxel3.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[6] = new Bezier("bezier/controlvoxel4.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[7] = new Bezier("bezier/controlvoxel5.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[8] = new Bezier("bezier/controlvoxel6.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[9] = new Bezier("bezier/controlvoxel7.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	
-	tracer->thing[2] = new Bezier("bezier/controlvoxel28.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[3] = new Bezier("bezier/controlvoxel29.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[4] = new Bezier("bezier/controlvoxel30.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
-	tracer->thing[5] = new Bezier("bezier/controlvoxel31.txt", Material(Color(0.4f, 0.7f, 0.7f), 0, 0.6, 0.4, 0, 0));
 	
 	//default initial in phantom
 	//param: reflect, diff, spec, refract, rindex
@@ -204,12 +186,12 @@ int main() {
 }
 
 void InitialParameter() {
-	viewpoint = Vec3::Vec3(0, 10, 0);//相机视点
+	viewpoint = Vec3::Vec3(0, 8, 0);//相机视点
 	viewplain = new Vec3*[n];
 	for (int i = 0; i < n; ++i) {
 		viewplain[i] = new Vec3[m];
 		for (int j = 0; j < m; ++j) {
-			viewplain[i][j] = Vec3::Vec3(-4 + 0.008*i, 5, 4-0.008*j);
+			viewplain[i][j] = Vec3::Vec3(-4 + 0.008*i, 3, 4-0.008*j);
 		}
 	}
 }

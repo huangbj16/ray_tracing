@@ -7,12 +7,20 @@
 #include <fstream>
 #include <string>
 
+class CrashBag {
+public:
+	Vec3 crash_point;
+	Vec3 vecN;
+	double u, v;
+	CrashBag();
+};
+
 class Thing {
 public:
 	Material material;
 
-	virtual Vec3* Crash(Vec3 source, Vec3 dir) = 0;
-	virtual Vec3 GetvecN(Vec3 *crash_point) = 0;
+	virtual CrashBag Crash(Vec3 source, Vec3 dir) = 0;
+	//virtual Vec3 GetvecN(Vec3 *crash_point) = 0;
 	virtual bool Inside(Vec3 point);
 	virtual double LengthInside(Vec3 vecN, Vec3 dir);
 };
@@ -22,8 +30,8 @@ public:
 	double radius;
 	Vec3 center;
 	Ball(Vec3 _c, double _r, Material _m);
-	Vec3* Crash(Vec3 source, Vec3 dir);
-	Vec3 GetvecN(Vec3 *crash_point);
+	CrashBag Crash(Vec3 source, Vec3 dir);
+	//Vec3 GetvecN(Vec3 *crash_point);
 	bool Inside(Vec3 point);
 	double LengthInside(Vec3 vecN, Vec3 dir);
 };
@@ -35,8 +43,8 @@ private://vecN * X + offset = 0
 public:
 	Plain();
 	Plain(Vec3 _vecN, double _offset, Material _m);
-	Vec3* Crash(Vec3 source, Vec3 dir);
-	Vec3 GetvecN(Vec3 *crash_point);
+	CrashBag Crash(Vec3 source, Vec3 dir);
+	//Vec3 GetvecN(Vec3 *crash_point);
 };
 
 class Bezier : public Thing {
@@ -47,13 +55,13 @@ public:
 	double factor[4][4];
 	double dfactor[4][3];
 	Vec3 mincover, maxcover;
-	Vec3 precrash;
-	double preu, prev;
+	//Vec3 precrash;
+	//double preu, prev;
 	Plain cover[6];
 	Bezier(std::string filename, Material _m);
 	void Initial();
-	Vec3 *Crash(Vec3 source, Vec3 dir);
-	Vec3 GetvecN(Vec3 *crash_point);
+	CrashBag Crash(Vec3 source, Vec3 dir);
+	//Vec3 GetvecN(Vec3 *crash_point);
 	Vec3 GetPoint(double u, double v);
 	Vec3 GetDiffU(double u, double v);
 	Vec3 GetDiffV(double u, double v);

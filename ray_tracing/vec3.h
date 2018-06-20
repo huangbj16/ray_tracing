@@ -34,6 +34,7 @@ public:
 	void AssRandomVector();
 	Vec3 GetAnVerticalVector();
 	bool IsZeroVector();
+	bool IsNullVector();
 	void Input(std::stringstream& fin);
 	Vec3 Reflect(Vec3 N);
 	Vec3 Refract(Vec3 N, double n);
